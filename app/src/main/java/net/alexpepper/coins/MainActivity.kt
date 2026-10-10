@@ -1,5 +1,6 @@
 package net.alexpepper.coins
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import kotlinx.serialization.json.Json
 
 
 class MainActivity : ComponentActivity() {
@@ -75,11 +77,7 @@ class MainActivity : ComponentActivity() {
                   "nativeBridge",     // Name of the object injected into JS
                   allowedOrigins,     // Allowed domains list
                   { view, message, sourceOrigin, isMainFrame, replyProxy ->
-                      // Handle the message sent from JavaScript
-                      val receivedText = message.data
-
-                      // Execute your native code here (e.g., show a toast or log data)
-                      println("Received from JS: $receivedText")
+                      showAlert(message.data)
                   }
               )
             }
@@ -87,5 +85,24 @@ class MainActivity : ComponentActivity() {
             loadUrl("https://appassets.androidplatform.net/assets/index.html")
         }
         setContentView(this.webView)
+    }
+
+    private fun showAlert(msg: String?) {
+        if (msg == null) return
+
+        val builder = AlertDialog.Builder(this)
+        val coinResults = Json.decodeFromString<CoinResults>(msg)
+
+        builder.setTitle(coinResults.coins?.joinToString(", "));
+
+        // Positive button (e.g., OK, Accept, Yes)
+        builder.setPositiveButton("OK") { dialog, which ->
+            // Code to execute when clicked
+            dialog.dismiss()
+        }
+
+        // Create and show the dialog
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.show()
     }
 }
