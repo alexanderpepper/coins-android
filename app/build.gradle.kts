@@ -13,13 +13,26 @@ android {
     sourceSets.getByName("main").assets.srcDir(rootProject.file("../coins/dist"))
 
     defaultConfig {
-        applicationId = "net.alexpepper.coins"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions += "product"
+    productFlavors {
+        create("coins") {
+            dimension = "product"
+            applicationId = "net.alexpepper.coins"
+            buildConfigField("String", "SHAKABLE_ARGUMENTS", "\"{\\\"coinCount\\\":1}\"")
+        }
+        create("dice") {
+            dimension = "product"
+            applicationId = "net.alexpepper.dice"
+            buildConfigField("String", "SHAKABLE_ARGUMENTS", "\"{\\\"d6DieCount\\\":1}\"")
+        }
     }
 
     buildTypes {
@@ -36,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
