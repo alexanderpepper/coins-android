@@ -1,5 +1,6 @@
 package net.alexpepper.coins
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,6 +13,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,57 +49,63 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        requestedOrientation = if (resources.configuration.smallestScreenWidthDp >= 600) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
         val preferences = getSharedPreferences("shakables", MODE_PRIVATE)
         val isCoins = BuildConfig.FLAVOR == "coins"
 
         setContent {
             var screen by androidx.compose.runtime.remember {
-                androidx.compose.runtime.mutableStateOf(MenuScreen.MAIN)
+                mutableStateOf(MenuScreen.MAIN)
             }
             var results by androidx.compose.runtime.remember {
-                androidx.compose.runtime.mutableStateOf<ShakableResults?>(null)
+                mutableStateOf<ShakableResults?>(null)
             }
             var showInstructions by androidx.compose.runtime.remember {
-                androidx.compose.runtime.mutableStateOf(false)
+                mutableStateOf(false)
             }
             var coinCount by androidx.compose.runtime.remember {
-                androidx.compose.runtime.mutableIntStateOf(
+                mutableIntStateOf(
                     preferences.getInt("coinCount", 1).coerceIn(1, 10)
                 )
             }
             val diceCounts = listOf(
                 DieCountSetting("d6", "d6DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d6DieCount", 1).coerceIn(0, 4)
                     )
                 }),
                 DieCountSetting("d4", "d4DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d4DieCount", 0).coerceIn(0, 4)
                     )
                 }),
                 DieCountSetting("d8", "d8DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d8DieCount", 0).coerceIn(0, 4)
                     )
                 }),
                 DieCountSetting("d10", "d10DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d10DieCount", 0).coerceIn(0, 4)
                     )
                 }),
                 DieCountSetting("d12", "d12DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d12DieCount", 0).coerceIn(0, 4)
                     )
                 }),
                 DieCountSetting("d20", "d20DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d20DieCount", 0).coerceIn(0, 4)
                     )
                 }),
                 DieCountSetting("d100", "d100DieCount", androidx.compose.runtime.remember {
-                    androidx.compose.runtime.mutableIntStateOf(
+                    mutableIntStateOf(
                         preferences.getInt("d100DieCount", 0).coerceIn(0, 4)
                     )
                 })
@@ -122,9 +131,11 @@ class MainActivity : ComponentActivity() {
                             webViewClient = object : WebViewClient() {
                                 override fun onPageFinished(view: WebView?, url: String?) {
                                     super.onPageFinished(view, url)
+                                    val arguments = pendingArguments
+                                        ?: if (!pageLoaded) BuildConfig.SHAKABLE_ARGUMENTS else null
                                     pageLoaded = true
-                                    pendingArguments?.let { arguments ->
-                                        runShakables(arguments)
+                                    arguments?.let {
+                                        runShakables(it)
                                         pendingArguments = null
                                     }
                                 }

@@ -54,13 +54,16 @@ fun MainMenu(
 ) {
     MenuPanel {
         MenuTitle(if (isCoins) "REAL COINS" else "REAL DICE")
-        MenuAction("START SHAKING", onStart)
+        MenuAction(
+            "START SHAKING",
+            onStart,
+            Modifier.padding(top = 20.dp, bottom = 32.dp, start = 0.dp, end = 0.dp))
         if (isCoins) {
             CoinCountControl(coinCount, onCoinCountChange)
         } else {
             FlowRow(
                 horizontalArrangement = Arrangement.Center,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
                 maxItemsInEachRow = 2
             ) {
                 diceCounts.forEach { setting ->
@@ -70,7 +73,10 @@ fun MainMenu(
                 }
             }
         }
-        MenuAction("INSTRUCTIONS", onInstructions)
+        MenuAction(
+            "INSTRUCTIONS",
+            onInstructions,
+            Modifier.padding(top = 20.dp, bottom = 0.dp, start = 0.dp, end = 0.dp))
     }
 }
 
@@ -98,12 +104,12 @@ fun ResultsMenu(
 private fun MenuPanel(content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxWidth(0.94f)
-            .widthIn(max = 400.dp)
-            .background(Color.White.copy(alpha = 0.14f), RoundedCornerShape(20.dp))
+            .fillMaxWidth(0.90f)
+            .widthIn(max = 300.dp)
+            .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
             .border(1.dp, Color.White.copy(alpha = 0.22f), RoundedCornerShape(20.dp))
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 16.dp),
+            .padding(all = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         content = content
     )
@@ -114,7 +120,7 @@ private fun MenuTitle(title: String) {
     Text(
         text = title,
         color = Color.White,
-        fontSize = 36.sp,
+        fontSize = 60.sp,
         fontWeight = FontWeight.ExtraLight,
         letterSpacing = 3.sp,
         textAlign = TextAlign.Center,
@@ -123,20 +129,28 @@ private fun MenuTitle(title: String) {
 }
 
 @Composable
-private fun MenuAction(label: String, onClick: () -> Unit) {
+private fun MenuAction(label: String, onClick: () -> Unit, modifier: Modifier) {
     TextButton(
+
         onClick = onClick,
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
+        contentPadding = PaddingValues(all = 0.dp),
+        modifier = modifier
     ) {
         Text(
             text = label,
-            color = Color.White,
-            fontSize = 20.sp,
+            color = Color.Green,
+            fontSize = 28.sp,
             fontWeight = FontWeight.ExtraLight,
             letterSpacing = 2.sp
         )
     }
 }
+
+@Composable
+private fun MenuAction(label: String, onClick: () -> Unit) {
+    MenuAction(label, onClick, Modifier.padding(start = 0.dp, end = 0.dp, bottom = 0.dp))
+}
+
 
 @Composable
 private fun CoinCountControl(count: Int, onCountChange: (Int) -> Unit) {
@@ -177,7 +191,7 @@ private fun CoinCountControl(count: Int, onCountChange: (Int) -> Unit) {
 @Composable
 private fun DieCountControl(type: String, count: Int, onCountChange: (Int) -> Unit) {
     Column(
-        modifier = Modifier.width(140.dp),
+        modifier = Modifier.width(120.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -187,14 +201,14 @@ private fun DieCountControl(type: String, count: Int, onCountChange: (Int) -> Un
             Image(
                 painter = painterResource(dieDrawable(type)),
                 contentDescription = type,
-                modifier = Modifier.size(38.dp)
+                modifier = Modifier.size(40.dp)
             )
             Text(
                 text = count.toString(),
                 color = Color.White,
-                fontSize = 34.sp,
+                fontSize = 40.sp,
                 fontWeight = FontWeight.ExtraLight,
-                modifier = Modifier.width(40.dp),
+                modifier = Modifier.width(60.dp),
                 textAlign = TextAlign.Center
             )
         }
@@ -269,7 +283,7 @@ private fun DiceResults(dice: List<DieResult>) {
     val total = dice.sumOf { it.value }
     FlowRow(
         horizontalArrangement = Arrangement.Center,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         maxItemsInEachRow = 2
     ) {
         dice.filter { it.type in DIE_TYPES }.forEach { result ->
