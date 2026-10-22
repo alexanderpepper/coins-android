@@ -229,6 +229,9 @@ private fun CountControls(
     onCountChange: (Int) -> Unit
 ) {
     Row(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(Color.Gray.copy(alpha = 0.25f)),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -236,13 +239,13 @@ private fun CountControls(
             onClick = { if (count > minimum) onCountChange(count - 1) },
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
         ) {
-            Text("-", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraLight)
+            Text("-", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.ExtraLight)
         }
         TextButton(
             onClick = { if (count < maximum) onCountChange(count + 1) },
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
         ) {
-            Text("+", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.ExtraLight)
+            Text("+", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.ExtraLight)
         }
     }
 }
