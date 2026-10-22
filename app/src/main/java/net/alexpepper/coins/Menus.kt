@@ -1,5 +1,6 @@
 package net.alexpepper.coins
 
+import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,10 +55,9 @@ fun MainMenu(
 ) {
     MenuPanel {
         MenuTitle(if (isCoins) "REAL COINS" else "REAL DICE")
-        MenuAction(
-            "START SHAKING",
-            onStart,
-            Modifier.padding(top = 20.dp, bottom = 32.dp, start = 0.dp, end = 0.dp))
+        Spacer(Modifier.height(12.dp))
+        MenuAction("START SHAKING", onStart)
+        Spacer(Modifier.height(24.dp))
         if (isCoins) {
             CoinCountControl(coinCount, onCoinCountChange)
         } else {
@@ -73,10 +73,8 @@ fun MainMenu(
                 }
             }
         }
-        MenuAction(
-            "INSTRUCTIONS",
-            onInstructions,
-            Modifier.padding(top = 20.dp, bottom = 0.dp, start = 0.dp, end = 0.dp))
+        Spacer(Modifier.height(20.dp))
+        MenuAction("INSTRUCTIONS", onInstructions)
     }
 }
 
@@ -89,13 +87,15 @@ fun ResultsMenu(
 ) {
     MenuPanel {
         MenuTitle("RESULTS")
+        Spacer(Modifier.height(20.dp))
         if (isCoins) {
             CoinResults(results.coins.orEmpty().filterNotNull())
         } else {
             DiceResults(results.dice.orEmpty())
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(8.dp))
         MenuAction("SHAKE AGAIN", onShakeAgain)
+        Spacer(Modifier.height(8.dp))
         MenuAction("MAIN MENU", onMainMenu)
     }
 }
@@ -106,7 +106,7 @@ private fun MenuPanel(content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier
             .fillMaxWidth(0.90f)
             .widthIn(max = 300.dp)
-            .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
+            .background(Color.Black.copy(alpha = 0.66f), RoundedCornerShape(20.dp))
             .border(1.dp, Color.White.copy(alpha = 0.22f), RoundedCornerShape(20.dp))
             .verticalScroll(rememberScrollState())
             .padding(all = 20.dp),
@@ -116,25 +116,27 @@ private fun MenuPanel(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-private fun MenuTitle(title: String) {
+private fun MenuTitle(title: String, fontWeight: FontWeight) {
     Text(
         text = title,
         color = Color.White,
         fontSize = 60.sp,
-        fontWeight = FontWeight.ExtraLight,
+        fontWeight = fontWeight,
         letterSpacing = 3.sp,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.padding(bottom = 4.dp)
+        textAlign = TextAlign.Center
     )
 }
 
 @Composable
-private fun MenuAction(label: String, onClick: () -> Unit, modifier: Modifier) {
-    TextButton(
+private fun MenuTitle(title: String) {
+    MenuTitle(title, FontWeight.ExtraLight)
+}
 
+@Composable
+private fun MenuAction(label: String, onClick: () -> Unit) {
+    TextButton(
         onClick = onClick,
         contentPadding = PaddingValues(all = 0.dp),
-        modifier = modifier
     ) {
         Text(
             text = label,
@@ -145,12 +147,6 @@ private fun MenuAction(label: String, onClick: () -> Unit, modifier: Modifier) {
         )
     }
 }
-
-@Composable
-private fun MenuAction(label: String, onClick: () -> Unit) {
-    MenuAction(label, onClick, Modifier.padding(start = 0.dp, end = 0.dp, bottom = 0.dp))
-}
-
 
 @Composable
 private fun CoinCountControl(count: Int, onCountChange: (Int) -> Unit) {
@@ -201,17 +197,21 @@ private fun DieCountControl(type: String, count: Int, onCountChange: (Int) -> Un
             Image(
                 painter = painterResource(dieDrawable(type)),
                 contentDescription = type,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier
+                    .padding(start = 15.dp)
+                    .size(40.dp)
+                    .width(60.dp)
             )
             Text(
                 text = count.toString(),
                 color = Color.White,
-                fontSize = 40.sp,
+                fontSize = 44.sp,
                 fontWeight = FontWeight.ExtraLight,
                 modifier = Modifier.width(60.dp),
                 textAlign = TextAlign.Center
             )
         }
+        Spacer(Modifier.height(12.dp))
         CountControls(
             count = count,
             minimum = 0,
@@ -230,7 +230,8 @@ private fun CountControls(
 ) {
     Row(
         modifier = Modifier
-            .padding(top = 8.dp, bottom = 0.dp, start = 8.dp, end = 8.dp)
+            .padding(start = 8.dp, end = 8.dp)
+            .height(40.dp)
             .clip(CircleShape)
             .background(Color.Gray.copy(alpha = 0.25f)),
         horizontalArrangement = Arrangement.Center,
@@ -238,15 +239,30 @@ private fun CountControls(
     ) {
         TextButton(
             onClick = { if (count > minimum) onCountChange(count - 1) },
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+            modifier = Modifier.width(56.dp)
         ) {
-            Text("-", color = Color.White, fontSize = 36.sp, fontWeight = FontWeight.ExtraLight)
+            Text(
+                "–",
+                modifier = Modifier.padding(top = 1.dp),
+                color = Color.White,
+                fontSize = 36.sp,
+                lineHeight = 36.sp,
+                fontWeight = FontWeight.ExtraLight
+            )
         }
         TextButton(
             onClick = { if (count < maximum) onCountChange(count + 1) },
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+            modifier = Modifier.width(56.dp)
         ) {
-            Text("+", color = Color.White, fontSize = 36.sp, fontWeight = FontWeight.ExtraLight)
+            Text(
+                "+",
+                color = Color.White,
+                fontSize = 36.sp,
+                lineHeight = 36.sp,
+                fontWeight = FontWeight.ExtraLight
+            )
         }
     }
 }
@@ -299,12 +315,12 @@ private fun DiceResults(dice: List<DieResult>) {
                 Image(
                     painter = painterResource(dieDrawable(result.type)),
                     contentDescription = result.type,
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(40.dp)
                 )
                 Text(
                     text = result.value.toString(),
                     color = Color.White,
-                    fontSize = 34.sp,
+                    fontSize = 42.sp,
                     fontWeight = FontWeight.ExtraLight,
                     modifier = Modifier.width(58.dp),
                     textAlign = TextAlign.Center
@@ -312,21 +328,14 @@ private fun DiceResults(dice: List<DieResult>) {
             }
         }
     }
+    Spacer(Modifier.height(20.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = "TOTAL:",
-            color = Color.White,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraLight,
-            letterSpacing = 2.sp
-        )
-        Text(
-            text = total.toString(),
-            color = Color.White,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraLight,
-            modifier = Modifier.padding(start = 8.dp)
-        )
+        Column (modifier = Modifier.padding(end = 4.dp)) {
+            MenuTitle("TOTAL:")
+        }
+        Column (modifier = Modifier.padding(start = 4.dp)) {
+            MenuTitle(total.toString(), FontWeight.SemiBold)
+        }
     }
 }
 
