@@ -53,10 +53,11 @@ fun MainMenu(
     onStart: () -> Unit,
     onInstructions: () -> Unit
 ) {
+    val totalSelectedDice = diceCounts.sumOf { it.count.intValue }
     MenuPanel {
         MenuTitle(if (isCoins) "REAL COINS" else "REAL DICE")
         Spacer(Modifier.height(12.dp))
-        MenuAction("START SHAKING", onStart)
+        MenuAction("START SHAKING", onStart, enabled = isCoins || totalSelectedDice > 0)
         Spacer(Modifier.height(24.dp))
         if (isCoins) {
             CoinCountControl(coinCount, onCoinCountChange)
@@ -67,7 +68,17 @@ fun MainMenu(
                 maxItemsInEachRow = 2
             ) {
                 diceCounts.forEach { setting ->
-                    DieCountControl(setting.dieType, setting.count.intValue) {
+                    DieCountControl(
+                        type = setting.dieType,
+                        count = setting.count.intValue,
+                        minimum = if (setting.count.intValue > 0 &&
+                            totalSelectedDice == setting.count.intValue
+                        ) {
+                            1
+                        } else {
+                            0
+                        }
+                    ) {
                         onDieCountChange(setting.dieType, it)
                     }
                 }
@@ -133,9 +144,10 @@ private fun MenuTitle(title: String) {
 }
 
 @Composable
-private fun MenuAction(label: String, onClick: () -> Unit) {
+private fun MenuAction(label: String, onClick: () -> Unit, enabled: Boolean = true) {
     TextButton(
         onClick = onClick,
+        enabled = enabled,
         contentPadding = PaddingValues(all = 0.dp),
     ) {
         Text(
@@ -185,7 +197,12 @@ private fun CoinCountControl(count: Int, onCountChange: (Int) -> Unit) {
 }
 
 @Composable
-private fun DieCountControl(type: String, count: Int, onCountChange: (Int) -> Unit) {
+private fun DieCountControl(
+    type: String,
+    count: Int,
+    minimum: Int,
+    onCountChange: (Int) -> Unit
+) {
     Column(
         modifier = Modifier.width(120.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -214,7 +231,7 @@ private fun DieCountControl(type: String, count: Int, onCountChange: (Int) -> Un
         Spacer(Modifier.height(12.dp))
         CountControls(
             count = count,
-            minimum = 0,
+            minimum = minimum,
             maximum = 4,
             onCountChange = onCountChange
         )
@@ -239,6 +256,7 @@ private fun CountControls(
     ) {
         TextButton(
             onClick = { if (count > minimum) onCountChange(count - 1) },
+            enabled = count > minimum,
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
             modifier = Modifier.width(56.dp)
         ) {
@@ -253,6 +271,7 @@ private fun CountControls(
         }
         TextButton(
             onClick = { if (count < maximum) onCountChange(count + 1) },
+            enabled = count < maximum,
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
             modifier = Modifier.width(56.dp)
         ) {
