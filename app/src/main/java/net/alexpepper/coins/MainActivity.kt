@@ -117,6 +117,7 @@ class MainActivity : ComponentActivity() {
                     factory = { context ->
                         WebView(context).apply {
                             webView = this
+                            post { requestFocus() }
                             settings.javaScriptEnabled = true
                             settings.domStorageEnabled = true
                             setLayerType(View.LAYER_TYPE_HARDWARE, null)

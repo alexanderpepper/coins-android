@@ -163,14 +163,14 @@ private fun CoinCountControl(count: Int, onCountChange: (Int) -> Unit) {
             Text(
                 text = count.toString(),
                 color = Color.Black,
-                fontSize = 66.sp,
+                fontSize = 80.sp,
                 fontWeight = FontWeight.ExtraLight
             )
         }
         Text(
             text = if (count == 1) "COIN" else "COINS",
             color = Color.White,
-            fontSize = 18.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.ExtraLight,
             letterSpacing = 2.sp,
             modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
@@ -271,14 +271,14 @@ private fun CountControls(
 private fun CoinResults(coins: List<String>) {
     FlowRow(
         horizontalArrangement = Arrangement.Center,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        maxItemsInEachRow = 3
+        verticalArrangement = Arrangement.Center,
+        maxItemsInEachRow = 2
     ) {
         coins.forEach { coin ->
             Box(
                 modifier = Modifier
-                    .padding(4.dp)
-                    .size(90.dp)
+                    .padding(12.dp)
+                    .size(106.dp)
                     .border(1.dp, Color.White, CircleShape)
                     .padding(4.dp)
                     .clip(CircleShape)
@@ -288,7 +288,7 @@ private fun CoinResults(coins: List<String>) {
                 Text(
                     text = coin.uppercase(),
                     color = Color.Black,
-                    fontSize = 16.sp,
+                    fontSize = 26.sp,
                     fontWeight = FontWeight.Light,
                     letterSpacing = 1.sp,
                     textAlign = TextAlign.Center
